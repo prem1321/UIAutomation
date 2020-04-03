@@ -1,0 +1,2646 @@
+public static String readDataFromExcel(int rowcount, int columncount, String filepath, String Sheetname) {
+		String data = null;
+		try {
+			FileInputStream input = new FileInputStream(filepath);
+			XSSFWorkbook wb = new XSSFWorkbook(input);
+			XSSFSheet sh = wb.getSheet(Sheetname);
+			try {
+				sh.createFreezePane(0, 0);
+			} catch (IndexOutOfBoundsException e) {
+
+				System.out.println("The cells are not frozen");
+			}
+			XSSFRow row = sh.getRow(rowcount);
+			String iCellVal = row.getCell(columncount).toString();
+			wb.close();
+			return iCellVal;
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		// JOptionPane.showMessageDialog(null, "The Parameter is Selected:-> " + data);
+		return data;
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @throws InterruptedException
+	 */
+	protected static void actionsAutoListSelect(WebDriver driver) throws InterruptedException {
+		Actions action = new Actions(driver);
+		action.sendKeys(Keys.DOWN);
+		Thread.sleep(1000);
+		action.sendKeys(Keys.ENTER);
+		Thread.sleep(1000);
+		action.perform();
+	}
+
+	/**
+	 * Write Data To Excel
+	 * 
+	 * @param rowcount
+	 *            int
+	 * @param columncount
+	 *            int
+	 * @param filepath
+	 *            String
+	 * @param Sheetname
+	 *            String
+	 * @param value
+	 *            String
+	 * @param iColor
+	 *            String
+	 */
+	protected void writeDataToExcel(int rowcount, int columncount, String filepath, String Sheetname, String value,
+			String iColor) {
+		try {
+			FileInputStream input = new FileInputStream(filepath);
+			XSSFWorkbook wb = new XSSFWorkbook(input);
+			XSSFSheet sh = wb.getSheet(Sheetname);
+			XSSFRow row = sh.getRow(rowcount);
+			XSSFCellStyle iSatzCellStyle = wb.createCellStyle();
+			iSatzCellStyle.setBorderTop(BorderStyle.THIN);
+			iSatzCellStyle.setBorderBottom(BorderStyle.THIN);
+			iSatzCellStyle.setBorderLeft(BorderStyle.THIN);
+			iSatzCellStyle.setBorderRight(BorderStyle.THIN);
+			if (iColor.equalsIgnoreCase("GREEN")) {
+				// iSatzCellStyle.setFillForegroundColor(HSSFColor.SEA_GREEN.index);
+				// iSatzCellStyle.setFillPattern( XSSFCellStyle.SOLID_FOREGROUND);
+			} else if (iColor.equalsIgnoreCase("RED")) {
+				// iSatzCellStyle.setFillForegroundColor(HSSFColor.ORANGE.index);
+				// iSatzCellStyle.setFillPattern( XSSFCellStyle.SOLID_FOREGROUND);
+			} else if (iColor.equalsIgnoreCase("GOLD")) {
+				// iSatzCellStyle.setFillForegroundColor(HSSFColor.GOLD.index);
+				// iSatzCellStyle.setFillPattern( XSSFCellStyle.SOLID_FOREGROUND);
+			} else if (iColor.equalsIgnoreCase("NONE")) {
+			}
+			FileOutputStream webdata = new FileOutputStream(filepath);
+			row.createCell(columncount).setCellValue(value);
+			row.getCell(columncount).setCellStyle(iSatzCellStyle);
+			wb.write(webdata);
+			webdata.close();
+			wb.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
+
+	/**
+	 * Move Files to Another Location for BackUP
+	 * 
+	 * @param sourceFolder
+	 *            String(original location path)
+	 * @param destinationFolder
+	 *            String(new location path)
+	 * @throws IOException
+	 */
+	public static void iMoveFilesBackUP(String sourceFolder, String destinationFolder) throws IOException {
+		File sourceFold = new File(sourceFolder);
+		File destinationFold = new File(destinationFolder);
+		if (sourceFold.exists() && sourceFold.isDirectory()) {
+			if (!destinationFold.exists()) {
+				destinationFold.mkdirs();
+				System.out.println("Successfully Created Destination Folder:-->" + destinationFold);
+			}
+			File[] iAllFiles = sourceFold.listFiles();
+			if (iAllFiles.length == 0) {
+				System.out.println("Source Folder Exists..But No Files... Please Verify:-->" + sourceFold);
+			} else {
+				for (File iFileName : iAllFiles) {
+					iFileName.renameTo(new File(destinationFold + "\\" + iFileName.getName()));
+					System.out.println(
+							"Successfully Moved Folder/File:-->" + iFileName.getName() + "-->To Destination Folder");
+				}
+			}
+		} else {
+			System.out.println("Source Folder Does Not Exists... Please Verify:-->" + sourceFold);
+		}
+	}
+
+	/**
+	 * Upload File
+	 * 
+	 * @param iUploadFilePath
+	 *            String(file path)
+	 * @return String
+	 * @throws Exception
+	 */
+	// "./Upload_File/iSparkSatzAutoFileUPload.xlsx"
+	protected static String uploadFile(String iUploadFilePath) throws Exception {
+		File iUpfilepath = new File(iUploadFilePath);
+		String iUploadAbsFilepath = iUpfilepath.getAbsolutePath();
+		return iUploadAbsFilepath;
+	}
+
+	/**
+	 * Create Folder
+	 * 
+	 * @param iOutputReportPath
+	 *            String(folder path)
+	 * @param iOutputReportFolderName
+	 *            String(file name)
+	 * @return String
+	 * @throws Exception
+	 */
+	public static String createFolder(String iOutputReportPath, String iOutputReportFolderName) throws Exception {
+		String iReportFolderName = iOutputReportFolderName;
+		File iReportFolderCreate = new File(iOutputReportPath + iReportFolderName);
+		if (!iReportFolderCreate.exists()) {
+			if (iReportFolderCreate.mkdir()) {
+				System.out.println("Folder is created!");
+			}
+		}
+		return iReportFolderName;
+	}
+
+	/**
+	 * Capture Date and TimeStamp
+	 * 
+	 * @return String
+	 * @throws Exception
+	 */
+	public static String iCreateTimeStampStr() throws Exception {
+		Calendar mycalendar = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat("MMddyyy_hhmmss");
+		String timeStamp = formatter.format(mycalendar.getTime());
+
+		return timeStamp;
+	}
+
+	/**
+	 * Screenshot Function with assert count
+	 * 
+	 * @param driver
+	 * @param iScreenShotpath
+	 *            String(folder path)
+	 * @param iScreenshotName
+	 *            String(screenshot name)
+	 * @param assertCount
+	 *            int
+	 * @return int
+	 */
+	public static int captureScreenshot(WebDriver driver, String iScreenShotpath, String iScreenshotName,
+			int assertCount) {
+		try {
+			// Shutterbug.shootPage(driver,ScrollStrategy.VERTICALLY,1000,true).save(iScreenShotpath+"\\"+iScreenshotName
+			// );
+			File iScreenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+			FileUtils.copyFile(iScreenshot, new File(iScreenShotpath + "\\" + iScreenshotName + ".png"));
+			LogAccess.getLogger().info("Screenshot Taken refer Folder :" + iScreenShotpath + "\\" + iScreenshotName);
+		} catch (Exception e) {
+			LogAccess.getLogger().info("Error While Taking Screenshot" + e);
+		}
+		assertCount++;
+		return assertCount;
+
+	}
+
+	/**
+	 * Screenshot Function
+	 * 
+	 * @param driver
+	 * @param iScreenShotpath
+	 *            String(folder path)
+	 * @param iScreenshotName
+	 *            String(screenshot name)
+	 */
+	public static void captureScreenshot(WebDriver driver, String iScreenShotpath, String iScreenshotName) {
+
+		if (CommonVariables.highlight_Screenshot_Switch == true) {
+			try {
+				// Shutterbug.shootPage(driver,ScrollStrategy.VERTICALLY,1000,true).save(iScreenShotpath+"\\"+iScreenshotName
+				// );
+				File iScreenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+				FileUtils.copyFile(iScreenshot, new File(iScreenShotpath + "\\" + iScreenshotName + ".png"));
+				LogAccess.getLogger()
+						.info("Screenshot Taken refer Folder :" + iScreenShotpath + "\\" + iScreenshotName);
+			} catch (Exception e) {
+				LogAccess.getLogger().info("Error While Taking Screenshot" + e);
+			}
+		}
+	}
+
+	/**
+	 * this will capture screenshot
+	 * 
+	 * @param driver
+	 * @param iScreenShotpath
+	 *            String(folder path)
+	 * @param iScreenshotName
+	 *            String(screenshot name)
+	 * @param ele
+	 *            WebElement
+	 * @throws IOException
+	 */
+	public static void captureHighlightScreenshot(WebDriver driver, String iScreenShotpath, String iScreenshotName,
+			WebElement ele) throws IOException {
+
+		if (CommonVariables.highlightFlag) {
+
+			try {
+
+				JavascriptExecutor js = (JavascriptExecutor) driver;
+				((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", ele);
+				js.executeScript("arguments[0].setAttribute('style', 'background: orange; border: 2px solid red;');",
+						ele);
+				File iScreenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+				FileUtils.copyFile(iScreenshot, new File(iScreenShotpath + "\\" + iScreenshotName + ".png"));
+				Thread.sleep(1000);
+				LogAccess.getLogger().info("Screenshot Taken refer Folder" + iScreenShotpath + "\\" + iScreenshotName);
+
+			} catch (Exception e) {
+
+				LogAccess.getLogger().info("Error While Taking Screenshot" + e);
+				try {
+					throw e;
+				} catch (Exception e1) {
+
+					e1.printStackTrace();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Addition of New Common function for Capture Screenshot with assert Count
+	 * 
+	 * @param driver
+	 * @param iScreenShotpath
+	 *            String(folder path)
+	 * @param iScreenshotName
+	 *            String(screenshot name)
+	 * @param ele
+	 *            WebElement
+	 * @param assertCount
+	 *            int
+	 * @return int
+	 * @throws IOException
+	 */
+	public static int captureHighlightScreenshot(WebDriver driver, String iScreenShotpath, String iScreenshotName,
+			WebElement ele, int assertCount) throws IOException {
+		try {
+			JavascriptExecutor js = (JavascriptExecutor) driver;
+			js.executeScript("arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});",
+					ele);
+			js.executeScript("arguments[0].setAttribute('style', 'background: orange; border: 2px solid red;');", ele);
+			Thread.sleep(500);
+			File iScreenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+			FileUtils.copyFile(iScreenshot, new File(iScreenShotpath + "\\" + iScreenshotName + ".png"));
+			Thread.sleep(500);
+			LogAccess.getLogger().info("Screenshot Taken refer Folder" + iScreenShotpath + "\\" + iScreenshotName);
+			js.executeScript("arguments[0].setAttribute('style', '');", ele);
+
+		} catch (Exception e) {
+
+			LogAccess.getLogger().info("Error While Taking Screenshot" + e);
+			try {
+				throw e;
+			} catch (Exception e1) {
+
+				e1.printStackTrace();
+			}
+		}
+
+		assertCount++;
+
+		return assertCount;
+	}
+
+	/**
+	 * This method will move element to the middle of the screen, highlights the
+	 * element and captures screenshots
+	 * 
+	 * @param driver
+	 * @param iScreenShotpath
+	 *            String(folder path)
+	 * @param iScreenshotName
+	 *            String(screenshot name)
+	 * @param ele
+	 *            WebElement
+	 * @throws IOException
+	 */
+
+	public static void captureMscreenshot(WebDriver driver, String iScreenShotpath, String iScreenshotName,
+			WebElement ele) throws IOException {
+
+		if (CommonVariables.highlightFlag) {
+
+			try {
+
+				JavascriptExecutor js = (JavascriptExecutor) driver;
+				String scrollElementIntoMiddle = "var viewPortHeight = Math.max(document.documentElement.clientHeight"
+						+ ",window.innerHeight || 0);" + "var elementTop = arguments[0].getBoundingClientRect().top;"
+						+ "window.scrollBy(0, elementTop-(viewPortHeight/2));";
+				((JavascriptExecutor) driver).executeScript(scrollElementIntoMiddle, ele);
+				js.executeScript("arguments[0].setAttribute('style', 'background: orange; border: 2px solid red;');",
+						ele);
+				File iScreenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+				FileUtils.copyFile(iScreenshot, new File(iScreenShotpath + "\\" + iScreenshotName + ".png"));
+				Thread.sleep(1000);
+				LogAccess.getLogger().info("Screenshot Taken refer Folder" + iScreenShotpath + "\\" + iScreenshotName);
+
+			} catch (Exception e) {
+
+				LogAccess.getLogger().info("Error While Taking Screenshot" + e);
+				try {
+					throw e;
+				} catch (Exception e1) {
+
+					e1.printStackTrace();
+				}
+			}
+		}
+	}
+
+	/**
+	 * this is Highlight Function
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 */
+	public static void highlight(WebDriver driver, WebElement element) {
+
+		if (CommonVariables.highlightFlag) {
+
+			JavascriptExecutor js = (JavascriptExecutor) driver;
+			try {
+
+				js.executeScript("arguments[0].setAttribute('style', 'background: maroon; border: 2px solid yellow;');",
+						element);
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				System.out.println(e.getMessage());
+			}
+			js.executeScript("arguments[0].setAttribute('style','border: solid 2px white')", element);
+		}
+	}
+
+	/**
+	 * robot take screenshot
+	 * 
+	 * @param iScreenShotpath
+	 *            String(folder path)
+	 * @param iScreenshotName
+	 *            String(screenshot name)
+	 */
+	public static void takeScreenShotRobot(String iScreenShotpath, String iScreenshotName) {
+
+		if (CommonVariables.highlight_Screenshot_Switch == true) {
+
+			try {
+				Thread.sleep(1000);
+				BufferedImage image = new Robot()
+						.createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+				ImageIO.write(image, "jpg", new File(iScreenShotpath + "\\" + iScreenshotName + ".jpg"));
+				Thread.sleep(1000);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * shutterBug take screenshot
+	 * 
+	 * @param driver
+	 * @param iScreenShotpath
+	 *            String(folder path)
+	 * @param iScreenshotName
+	 *            String(screenshot name)
+	 */
+	public static void shutterBugScreenshot(WebDriver driver, String iScreenShotpath, String iScreenshotName) {
+
+		// Screenshot sc = new
+		// AShot().shootingStrategy(ShootingStrategies.viewportPasting(1000)).takeScreenshot(driver);
+		// Shutterbug.shootPage(driver,ScrollStrategy.VERTICALLY,1000,true).save(iScreenShotpath
+		// + "\\" + iScreenshotName + ".png");
+
+		Screenshot sc = new AShot().shootingStrategy(ShootingStrategies.viewportRetina(100, 0, 0, 2))
+				.takeScreenshot(driver);
+		try {
+
+			ImageIO.write(sc.getImage(), "png", new File(iScreenShotpath + "\\" + iScreenshotName + ".png"));
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+	// **************Wait Condition
+	/**
+	 * Implicit Wait
+	 * 
+	 * @param driver
+	 * @param iWaitTime
+	 *            int(seconds)
+	 */
+	public void implicitWait(WebDriver driver, int iWaitTime) {
+		driver.manage().timeouts().implicitlyWait(iWaitTime, TimeUnit.SECONDS);
+	}
+
+	// **********************Object Calling Functions
+
+	/**
+	 * this will input text
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param iTestDataValue
+	 *            String(input text)
+	 * @return String
+	 */
+	public String inputTextField(WebDriver driver, WebElement iObjectElement, String iTestDataValue) {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				highlight(driver, iObjectElement);
+				LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+				iObjectElement.click();
+				iObjectElement.clear();
+				iObjectElement.sendKeys(iTestDataValue);
+				Thread.sleep(1000);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return iTestDataValue;
+	}
+
+	/**
+	 * input text using JavascriptExecutor
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param iTestDataValue
+	 *            String(input text)
+	 * @return String
+	 */
+	public String inputTextFieldJavaScript(WebDriver driver, WebElement iObjectElement, String iTestDataValue) {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				highlight(driver, iObjectElement);
+				LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+				JavascriptExecutor jse = (JavascriptExecutor) driver;
+				jse.executeScript("arguments[0].value='" + iTestDataValue + "';", iObjectElement);
+				Thread.sleep(1000);
+			}
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		return iTestDataValue;
+	}
+
+	/**
+	 * this will input text, then highlight, then capture screenshot
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param iTestDataValue
+	 *            String(input text)
+	 * @param iScreenShotpath
+	 *            String(screenshot folder path)
+	 * @param iScreenshotName
+	 *            String(screenshot name)
+	 * @param assertCount
+	 *            int
+	 * @param isCaptureScreenshot
+	 *            Boolean(pass true to take screenshot or pass false for NOT to take
+	 *            screenshot )
+	 * @return int
+	 * @throws Exception
+	 */
+	public int inputTextFieldCaptureScreenshot(WebDriver driver, WebElement iObjectElement, String iTestDataValue,
+			String iScreenShotpath, String iScreenshotName, int assertCount, boolean isCaptureScreenshot)
+			throws Exception {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				highlight(driver, iObjectElement);
+				LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+				iObjectElement.click();
+				iObjectElement.clear();
+				iObjectElement.sendKeys(iTestDataValue);
+				Thread.sleep(1000);
+
+				if (isCaptureScreenshot)
+					assertCount = captureHighlightScreenshot(driver, iScreenShotpath, iScreenshotName, iObjectElement,
+							assertCount);
+
+			}
+
+		} catch (Exception e) {
+
+			throw e;
+
+		}
+		return assertCount;
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param iIndexValue
+	 *            int
+	 */
+	public void dropDownByIndex(WebDriver driver, WebElement iObjectElement, int iIndexValue) {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				highlight(driver, iObjectElement);
+				LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+				// iObjectElement.click();
+				Select iDropDownByIndex = new Select(iObjectElement);
+				// ((JavascriptExecutor)
+				// driver).executeScript("arguments[0].scrollIntoView(true);", iObjectElement);
+				// ((JavascriptExecutor) driver).executeScript("arguments[0].click()",
+				// iObjectElement);
+				iDropDownByIndex.selectByIndex(iIndexValue);
+				Thread.sleep(1000);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * this will find how many elements inside dropdown menu
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @return int
+	 */
+	public int dropDownByIndexSize(WebDriver driver, WebElement iObjectElement) {
+		int size = 0;
+		try {
+			highlight(driver, iObjectElement);
+			LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+			iObjectElement.click();
+			Select iDropDownByIndex = new Select(iObjectElement);
+			List<WebElement> l = iDropDownByIndex.getOptions();
+			size = l.size();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return size;
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param iSelectValue
+	 *            String
+	 */
+	public static void dropDownByValue(WebDriver driver, WebElement iObjectElement, String iSelectValue) {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				highlight(driver, iObjectElement);
+				LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+				iObjectElement.click();
+				Select iDropDownByValue = new Select(iObjectElement);
+				((JavascriptExecutor) driver).executeScript(
+						"arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});",
+						iObjectElement);
+				((JavascriptExecutor) driver).executeScript("arguments[0].click()", iObjectElement);
+				iDropDownByValue.selectByValue(iSelectValue);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param iobjElement
+	 *            WebElement
+	 * @param itemToSelect
+	 *            String
+	 * @throws InterruptedException
+	 */
+	public static void selectItem(WebDriver driver, WebElement iobjElement, String itemToSelect)
+			throws InterruptedException {
+		Thread.sleep(5000);
+
+		Select drp = new Select(iobjElement);
+		drp.selectByVisibleText(itemToSelect);
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param iobjElement
+	 *            WebElement
+	 * @return String
+	 */
+	public static String readSelectedDDValue(WebDriver driver, WebElement iobjElement) {
+		WebElement temp = null;
+		try {
+			if (findByElement(driver, iobjElement)) {
+
+				Assert.assertEquals(true, iobjElement.isDisplayed());
+				highlight(driver, iobjElement);
+				Select select = new Select(iobjElement);
+				temp = select.getFirstSelectedOption();
+				LogAccess.getLogger()
+						.info("I am here to highlight and get text from DropDown WebElement " + temp.getText());
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return temp.getText();
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param iSelectValue
+	 *            String
+	 */
+	public static void dropDownByVisibleText(WebDriver driver, WebElement iObjectElement, String iSelectValue) {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				highlight(driver, iObjectElement);
+				LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+				// iObjectElement.click();
+				Select iDropDownByValue = new Select(iObjectElement);
+				// iObjectElement.click();
+				iDropDownByValue.selectByVisibleText(iSelectValue);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 * @param iSelectValue
+	 * @param iScreenShotpath
+	 * @param iScreenshotName
+	 * @param assertCount
+	 * @param isCaptureScreenshot
+	 * @return
+	 * @throws Exception
+	 */
+	public static int dropDownByVisibleTextCaptureScreenshot(WebDriver driver, WebElement iObjectElement,
+			String iSelectValue, String iScreenShotpath, String iScreenshotName, int assertCount,
+			boolean isCaptureScreenshot) throws Exception {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Thread.sleep(3000);
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				highlight(driver, iObjectElement);
+				LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+				// iObjectElement.click();
+				Select iDropDownByVisibleText = new Select(iObjectElement);
+				((JavascriptExecutor) driver)
+						.executeScript("arguments[0].scrollIntoView(true);window.scrollBy(0,-100);", iObjectElement);
+				((JavascriptExecutor) driver).executeScript("arguments[0].click()", iObjectElement);
+				iDropDownByVisibleText.selectByVisibleText(iSelectValue);
+
+				if (isCaptureScreenshot)
+					assertCount = captureHighlightScreenshot(driver, iScreenShotpath, iScreenshotName, iObjectElement,
+							assertCount);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+
+		return assertCount;
+	}
+
+	/**
+	 * this will click WebElement
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @throws InterruptedException
+	 */
+	public static void buttonClick(WebDriver driver, WebElement iObjectElement) throws InterruptedException {
+		highlight(driver, iObjectElement);
+		LogAccess.getLogger().info("I am here to click the button " + iObjectElement);
+
+		try {
+			iObjectElement.click();
+			Thread.sleep(500);
+		} catch (Exception e) {
+
+			((JavascriptExecutor) driver).executeScript("arguments[0].click()", iObjectElement);
+			Thread.sleep(500);
+		}
+	}
+
+	/**
+	 * this will find WebElement, then highlight, then click
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @throws InterruptedException
+	 */
+	public static void findButtonClick(WebDriver driver, WebElement iObjectElement) throws InterruptedException {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Thread.sleep(2000);
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				highlight(driver, iObjectElement);
+				LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+				((JavascriptExecutor) driver).executeScript(
+						"arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});",
+						iObjectElement);
+				iObjectElement.click();
+				Thread.sleep(2000);
+			}
+
+		} catch (NoSuchElementException e) {
+			((JavascriptExecutor) driver).executeScript("arguments[0].click()", iObjectElement);
+			Thread.sleep(2000);
+		}
+	}
+
+	/**
+	 * this will find WebElement, then highlight, then capture screenshot, then
+	 * click
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param iScreenShotpath
+	 *            String(folder path)
+	 * @param iScreenshotName
+	 *            String(screenshot name)
+	 * @param assertCount
+	 *            int
+	 * @param isCaptureScreenshot
+	 *            Boolean( pass true to take screenshot or false to NOT to take
+	 *            screenshot)
+	 * @return int(AssertCount)
+	 * @throws Exception
+	 */
+	public static int findButtonClickCaptureScreenshotBefore(WebDriver driver, WebElement iObjectElement,
+			String iScreenShotpath, String iScreenshotName, int assertCount, boolean isCaptureScreenshot)
+			throws Exception {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				if (isCaptureScreenshot)
+					assertCount = captureHighlightScreenshot(driver, iScreenShotpath, iScreenshotName, iObjectElement,
+							assertCount);
+
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				// highlight(driver, iObjectElement);
+				// LogAccess.getLogger().info("I am here to highlight and find the WebElement "
+				// + iObjectElement);
+				// ((JavascriptExecutor)
+				// driver).executeScript("arguments[0].scrollIntoView(false);", iObjectElement);
+				iObjectElement.click();
+				Thread.sleep(500);
+
+			}
+
+		} catch (ElementClickInterceptedException e) {
+			WebElement close = driver.findElement(By.xpath("//button[@type='button'][@title='Close']"));
+			waitForElement(driver, close, 5);
+			close.click();
+			Thread.sleep(1000);
+			iObjectElement.click();
+			Thread.sleep(500);
+
+		} catch (StaleElementReferenceException e) {
+			driver.navigate().refresh();
+			waitForPageToLoad(driver);
+			waitForElement(driver, iObjectElement, 30);
+			moveToElement(driver, iObjectElement);
+			iObjectElement.click();
+
+		} catch (JavascriptException e) {
+			((JavascriptExecutor) driver).executeScript("arguments[0].click()", iObjectElement);
+			Thread.sleep(500);
+
+		} catch (NoSuchElementException e) {
+			((JavascriptExecutor) driver).executeScript("arguments[0].click()", iObjectElement);
+			Thread.sleep(500);
+
+		} catch (Exception ex) {
+			throw ex;
+		}
+
+		return assertCount;
+	}
+
+	/**
+	 * this will find WebElement, then highlight, then click, then capture
+	 * screenshot
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param iScreenShotpath
+	 *            String(folder path)
+	 * @param iScreenshotName
+	 *            String(screenshot name)
+	 * @param assertCount
+	 *            int
+	 * @param isCaptureScreenshot
+	 *            Boolean( pass true to take screenshot or false to NOT to take
+	 *            screenshot)
+	 * @return int (AssertCount)
+	 * @throws Exception
+	 */
+	public static int findButtonClickCaptureScreenshotAfter(WebDriver driver, WebElement iObjectElement,
+			String iScreenShotpath, String iScreenshotName, int assertCount, boolean isCaptureScreenshot)
+			throws Exception {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				highlight(driver, iObjectElement);
+				LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+				((JavascriptExecutor) driver).executeScript(
+						"arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});",
+						iObjectElement);
+				iObjectElement.click();
+				Thread.sleep(500);
+
+				if (isCaptureScreenshot)
+					assertCount = captureHighlightScreenshot(driver, iScreenShotpath, iScreenshotName, iObjectElement,
+							assertCount);
+			}
+
+		} catch (NoSuchElementException e) {
+			((JavascriptExecutor) driver).executeScript("arguments[0].click()", iObjectElement);
+			Thread.sleep(500);
+
+		} catch (Exception ex) {
+			throw ex;
+		}
+
+		return assertCount;
+	}
+
+	/**
+	 * this will find element, then highlight, then click, then capture screenshot
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param ScreenshotPath
+	 *            String(folder path)
+	 * @param ScreenshotName
+	 *            String
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	public void buttonClickScreenshot(WebDriver driver, WebElement iObjectElement, String ScreenshotPath,
+			String ScreenshotName) throws InterruptedException, IOException {
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Assert.assertEquals(true, iObjectElement.isDisplayed());
+				highlight(driver, iObjectElement);
+				LogAccess.getLogger().info("I am here to highlight and find the WebElement " + iObjectElement);
+				((JavascriptExecutor) driver).executeScript(
+						"arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});",
+						iObjectElement);
+				iObjectElement.click();
+				captureHighlightScreenshot(driver, ScreenshotPath, ScreenshotName, iObjectElement);
+				((JavascriptExecutor) driver).executeScript("arguments[0].click();", iObjectElement);
+			}
+		} catch (NoSuchElementException e) {
+			((JavascriptExecutor) driver).executeScript("arguments[0].click()", iObjectElement);
+			Thread.sleep(2000);
+		}
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param iGetErrorElement
+	 *            WebElement
+	 * @return String
+	 */
+	public String getErrorMessage(WebDriver driver, WebElement iGetErrorElement) {
+		String iActualErrorMessage = iGetErrorElement.getText();
+		System.out.println("Actual Error Message:- " + iActualErrorMessage);
+		JOptionPane.showMessageDialog(null, "Error Message: " + iActualErrorMessage);
+		return iActualErrorMessage;
+	}
+
+	/**
+	 * this will get text from WebElement
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WbElement
+	 * @return String
+	 */
+	public static String getText(WebDriver driver, WebElement iObjectElement) {
+		String iActualText = null;
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				iActualText = iObjectElement.getText();
+				System.out.println("Actual Page Text:- " + iActualText);
+				highlight(driver, iObjectElement);
+
+			}
+
+		}
+
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return iActualText;
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param att_type
+	 *            String
+	 * @return String
+	 */
+	public static String getAttribute(WebDriver driver, WebElement iObjectElement, String att_type) {
+		String iActualText = iObjectElement.getAttribute(att_type);
+		System.out.println("Actual Page Text:- " + iActualText);
+		return iActualText;
+	}
+
+	/**
+	 * will generate random string with certain length as: IVVTEST+randomText
+	 * 
+	 * @param length
+	 *            int
+	 * @return String
+	 */
+	public String generateString(int length) {
+		String allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // alphabets and numbers
+
+		String randomtext = "";
+		String temp = RandomStringUtils.random(length, allowedChars);
+		randomtext = "IVVTEST" + temp.substring(0, temp.length() - 2);
+
+		return randomtext;
+	}
+
+	/**
+	 * 
+	 * @param digit
+	 *            int
+	 * @return int
+	 */
+	public int generateRandomNumber(int digit) {
+		SecureRandom random = new SecureRandom();
+		int num = random.nextInt(digit);
+		return num;
+	}
+
+	/**
+	 * 
+	 * @param min
+	 *            int
+	 * @param max
+	 *            int
+	 * @return int
+	 */
+	public static int generateRandNumber(int min, int max) {
+		SecureRandom random = new SecureRandom();
+		int randomNumber = random.nextInt(max + 1 - min) + min;
+		return randomNumber;
+	}
+
+	/**
+	 * this will generate random number
+	 * 
+	 * @return int
+	 */
+	public int randomNumber() {
+		long timeSeed = System.nanoTime(); // to get the current date time value
+
+		double randSeed = Math.random() * 1000; // random number generation
+
+		long midSeed = (long) (timeSeed * randSeed); // mixing up the time and
+
+		String s = midSeed + "";
+		String subStr = s.substring(0, 9);
+
+		int finalSeed = Integer.parseInt(subStr); // integer value
+
+		System.out.println(finalSeed);
+		return finalSeed;
+	}
+
+	/**
+	 * will get today EDT date
+	 * 
+	 * @return String
+	 */
+	public String getTodaysDateEDT() {
+
+		Date date = new Date();
+		DateFormat formatter = new SimpleDateFormat("MM/dd/YYYY HH:mm a");
+
+		System.out.println(formatter.format(date).toString() + " " + "EDT");
+		return formatter.format(date).toString() + " " + "EDT";
+	}
+
+	/**
+	 * will get current MM/dd/yyyy date
+	 * 
+	 * @return String
+	 */
+	public String getCurrentDate() {
+		Date date = new Date();
+		String modifiedDate = new SimpleDateFormat("MM/dd/yyyy").format(date);
+		return modifiedDate;
+	}
+
+	/**
+	 * will get yesterday MM/dd/yyyy date
+	 * 
+	 * @return String
+	 */
+	public String getYesterdayDate() {
+		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -1);
+		return dateFormat.format(cal.getTime());
+	}
+
+	/**
+	 * will get tomorrow MM/dd/yyyyw date
+	 * 
+	 * @return String
+	 */
+	public String getFutureDate() {
+		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, +1);
+		return dateFormat.format(cal.getTime());
+	}
+
+	/**
+	 * Verify Date Time Stamp
+	 * 
+	 * @return String
+	 * @throws Exception
+	 */
+	public static String getCurrentDateTime() throws Exception {
+		Calendar mycalendar = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm");
+		String timeStamp = formatter.format(mycalendar.getTime());
+		return timeStamp;
+	}
+
+	/**
+	 * Get Current Time alone
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getCurrentTime() throws Exception {
+		Calendar mycalendar = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+		String timeStamp = formatter.format(mycalendar.getTime());
+		return timeStamp;
+	}
+
+	/**
+	 * Get future time by adding extra mins
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getTime(int addNoOfMins, String timeFormat) throws Exception {
+		String myTime = getCurrentTime();
+		SimpleDateFormat formatter = new SimpleDateFormat(timeFormat);
+		Date d = formatter.parse(myTime);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		cal.add(Calendar.MINUTE, addNoOfMins);
+		String newTime = formatter.format(cal.getTime());
+		return newTime;
+	}
+
+	/**
+	 * 
+	 * @return String
+	 * @throws Exception
+	 */
+	public static String getCurrentDateTimeMeridian() throws Exception {
+		Calendar mycalendar = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy h:mma");
+		String timeStamp = formatter.format(mycalendar.getTime());
+		return timeStamp;
+	}
+
+	/**
+	 * Delimiter
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            String
+	 * @param delimiter
+	 *            String
+	 * @param stringlocation
+	 *            int
+	 * @return String
+	 */
+	public static String delimiterSeparator(WebDriver driver, String iObjectElement, String delimiter,
+			int stringlocation) {
+		String testString = iObjectElement;
+		String[] parts = testString.split(delimiter);
+		String iLastWord = parts[stringlocation];
+		return iLastWord;
+	}
+
+	/**
+	 * Capture Date and TimeStamp
+	 * 
+	 * @return String
+	 * @throws Exception
+	 */
+	public static String executionFolderCreate() throws Exception {
+		Calendar iSatzmycalendar = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat("MMdd_hhmm_ss");
+		String iSatzDatetimeStamp = formatter.format(iSatzmycalendar.getTime());
+		// JOptionPane.showMessageDialog(null,iSatzDatetimeStamp);
+		return iSatzDatetimeStamp;
+	}
+
+	/**
+	 * this will check if element is present and displayed on screen
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @return boolean
+	 */
+	public static boolean isPresentAndDisplayed(WebDriver driver, WebElement element) {
+
+		try {
+			if (findByElement(driver, element) == true) {
+
+				highlight(driver, element);
+
+			}
+			return element.isDisplayed();
+
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * this will check if element is present and enabled
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @return boolean
+	 */
+	public static boolean isPresentAndEnabled(WebDriver driver, WebElement element) {
+		try {
+				highlight(driver, element);
+			return element.isEnabled();
+		} catch (NoSuchElementException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * this will check if element is present for a 5 seconds
+	 * 
+	 * @param driver
+	 * @param elementXpath
+	 *            String
+	 * @return boolean
+	 */
+	public boolean isElementPresent(WebDriver driver, String elementXpath) {
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		int count = driver.findElements(By.xpath(elementXpath)).size();
+
+		if (count == 0) {
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+			return false;
+		} else {
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+			return true;
+		}
+
+	}
+
+	/**
+	 * this will check if element present
+	 * 
+	 * @param driver
+	 * @param by
+	 *            By locator
+	 * @return boolean
+	 */
+	public boolean isElementPresentBy(WebDriver driver, By by) {
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		try {
+			driver.findElement(by);
+			return true;
+		} catch (NoSuchElementException e) {
+			System.out.println("Caught NoSuchElementException");
+			return false;
+
+		} catch (ElementNotVisibleException e) {
+			System.out.println("Caught ElementNotVisibleException");
+			return false;
+
+		} finally {
+			driver.manage().timeouts().implicitlyWait(5 * 1, TimeUnit.SECONDS);
+		}
+	}
+
+	/**
+	 * this will look for element for 120 seconds
+	 * 
+	 * @param driver
+	 * @param locator
+	 *            WebElement
+	 * @return boolean
+	 */
+	public static boolean findByElement(WebDriver driver, WebElement locator) {
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+		try {
+
+			WebElement ele = (new WebDriverWait(driver, 120)).until(ExpectedConditions.visibilityOf(locator));
+			Assert.assertEquals(true, ele.isDisplayed());
+			// highlight(driver, locator);
+			LogAccess.getLogger().info("I am here to highlight and find the WebElement " + locator);
+			// ((JavascriptExecutor)
+			// driver).executeScript("arguments[0].scrollIntoView(true);", ele);
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+
+			return true;
+		} catch (TimeoutException e) {
+			driver.navigate().refresh();
+			waitForPageToLoad(driver);
+			waitForElement(driver, locator, 30);
+			moveToElement(driver, locator);
+			return true;
+
+		} catch (NoSuchElementException e) {
+			// Assert.fail("Error..Warning Element Doesn't Exist/ Visible ");
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+
+			return false;
+		}
+
+	}
+
+	/**
+	 * this will check for presence of element from list
+	 * 
+	 * @param driver
+	 * @param locator
+	 *            List<WebElement>
+	 * @return boolean
+	 */
+	public static boolean listfindByElement(WebDriver driver, List<WebElement> locator) {
+		try {
+
+			List<WebElement> ele = (new WebDriverWait(driver, 60))
+					.until(ExpectedConditions.visibilityOfAllElements(locator));
+
+			return true;
+		} catch (NoSuchElementException e) {
+			// Assert.fail("Error..Warning Element Doesn't Exist/ Visible ");
+
+			return false;
+		}
+
+	}
+
+	/**
+	 * this will check if file downloaded
+	 * 
+	 * @param downloadPath
+	 *            String(download path)
+	 * @param ifileName
+	 *            String(file name)
+	 * @return boolean
+	 */
+	public static boolean isFileDownloaded(String downloadPath, String ifileName) {
+		boolean flag = false;
+		File dir = new File(downloadPath);
+		File[] dir_contents = dir.listFiles();
+
+		for (int i = 0; i < dir_contents.length; i++) {
+			// if (dir_contents[i].getName().equals(ifileName)) {
+			if (dir_contents[i].getName().contains(ifileName)) {
+				System.out.println("File Name:-->" + ifileName);
+				return flag = true;
+			}
+		}
+
+		return flag;
+
+	}
+
+	/**
+	 * this will check all values from drop down menu
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @param iIdentifyDrpDwnValues
+	 *            String[]
+	 * @return boolean
+	 */
+	public boolean verifyDropDownValues(WebDriver driver, WebElement iObjectElement, String[] iIdentifyDrpDwnValues) {
+
+		int iTotalCount = 0;
+		WebElement iDropDownListCompare = iObjectElement;
+		Select iGetDropDownList = new Select(iDropDownListCompare);
+
+		List<WebElement> iVerifyDrpDwnValues = iGetDropDownList.getOptions();
+		for (WebElement iValidateDrpDwnValues : iVerifyDrpDwnValues) {
+			for (int i = 0; i < iIdentifyDrpDwnValues.length; i++) {
+				if (iValidateDrpDwnValues.getText().equals(iIdentifyDrpDwnValues[i])) {
+					iTotalCount++;
+				}
+			}
+		}
+		if (iTotalCount == iIdentifyDrpDwnValues.length) {
+			System.out.println("Dropdown List Content Matched");
+			return true;
+		} else {
+			System.out.println("Hi iRobot, We have a PROBLEM, Dropdown List Content NOT Matched");
+			return false;
+		}
+
+	}
+
+	/**
+	 * this will upload file
+	 * 
+	 * @param driver
+	 * @param iUploadFilePath
+	 *            String
+	 * @param iObjectElement
+	 *            WebElement
+	 * @throws Exception
+	 */
+	public static void autoUploadFile(WebDriver driver, String iUploadFilePath, WebElement iObjectElement)
+			throws Exception {
+
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Thread.sleep(5000);
+				File iUpfilepath = new File(iUploadFilePath);
+				String iUploadAbsFilepath = iUpfilepath.getAbsolutePath();
+				iObjectElement.sendKeys(iUploadAbsFilepath);
+				Thread.sleep(1500);
+			}
+		}
+
+		catch (Exception e) {
+
+			System.out.println(e);
+		}
+	}
+
+	public void threadSleep(int i) {
+		try {
+
+			if (!Thread.interrupted()) {
+				Thread.sleep(i);
+			} else {
+				System.out.println("thread Interupted");
+				throw new InterruptedException();
+			}
+		} catch (Exception e) {
+
+			System.out.println(e);
+		}
+	}
+
+	/**
+	 * this will check if element present
+	 * 
+	 * @param driver
+	 * @param by
+	 *            By locator
+	 * @return boolean
+	 */
+	public boolean isElementPresent(WebDriver driver, By by) {
+		driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+		try {
+			driver.findElement(by);
+			return true;
+		} catch (NoSuchElementException e) {
+			System.out.println("Caught NoSuchElementException");
+			return false;
+
+		} catch (ElementNotVisibleException e) {
+			System.out.println("Caught ElementNotVisibleException");
+			return false;
+
+		} finally {
+			driver.manage().timeouts().implicitlyWait(10 * 1, TimeUnit.SECONDS);
+		}
+	}
+
+	/**
+	 * this will check if font is bold
+	 * 
+	 * @param driver
+	 * @param ele
+	 *            WebElement
+	 * @return boolean
+	 */
+	public boolean isFontBold(WebDriver driver, WebElement ele) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+
+		String fontWeight = (String) js
+				.executeScript("return getComputedStyle(arguments[0]).getPropertyValue('font-Weight');", ele);
+		String fontSize = ele.getCssValue("font-size");
+		System.out.println("Font Size -> " + fontSize);
+
+		Assert.assertTrue(fontWeight.equals("bold") || fontWeight.equals("700"));
+
+		if (fontWeight.trim().equals("700")) {
+			System.out.println("The element Is Bold");
+			return true;
+		} else {
+			System.out.println("The element Is Not Bold - " + fontWeight);
+			return false;
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param pageLoadedText
+	 *            String
+	 * @return function
+	 */
+	public CommonFunction verifyPageLoaded(WebDriver driver, String pageLoadedText) {
+		(new WebDriverWait(driver, timeout)).until(new ExpectedCondition<Boolean>() {
+			public Boolean apply(WebDriver d) {
+				LogAccess.getLogger().info(pageLoadedText);
+				return d.getPageSource().contains(pageLoadedText);
+			}
+		});
+		return this;
+	}
+
+	/**
+	 * 
+	 * @param inDate
+	 *            String
+	 * @return boolean
+	 */
+	public static boolean isValidDate(String inDate) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy mm:ss a");
+		dateFormat.setLenient(false);
+		try {
+			dateFormat.parse(inDate.trim());
+		} catch (ParseException pe) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * this will create date in specified format
+	 * 
+	 * @param specifyFormat
+	 *            String
+	 * @return String
+	 */
+	public static String getCurrentDateFormat(String specifyFormat) {
+		Date date = new Date();
+		String modifiedDate = new SimpleDateFormat(specifyFormat).format(date);
+		return modifiedDate;
+	}
+
+	/**
+	 * 
+	 * @return String
+	 */
+	public static String getCurrentQuarter() {
+
+		String qtr = Integer.toString(LocalDate.now().get(IsoFields.QUARTER_OF_YEAR));
+		if (qtr.equalsIgnoreCase("1")) {
+			System.out.println("Q1");
+		}
+
+		if (qtr.equalsIgnoreCase("2")) {
+			System.out.println("Q2");
+		}
+
+		if (qtr.equalsIgnoreCase("3")) {
+			System.out.println("Q3");
+		}
+
+		if (qtr.equalsIgnoreCase("4")) {
+			System.out.println("Q4");
+		}
+		return qtr;
+	}
+
+	/**
+	 * 
+	 * @param filename
+	 *            String
+	 * @param arr
+	 *            ArrayList<String>
+	 * @throws IOException
+	 */
+	public static void bufferedWrite(String filename, ArrayList<String> arr) throws IOException {
+
+		FileWriter writer = new FileWriter(new File(filename));
+
+		for (String t : arr) {
+			writer.write(t);
+		}
+		writer.close();
+	}
+
+	/**
+	 * 
+	 * @param ifilepath
+	 *            String
+	 * @param iSheetname
+	 *            String
+	 * @return String
+	 * @throws IOException
+	 */
+	public static String ReadExcelRecords(String ifilepath, String iSheetname) throws IOException {
+		String iExcelPath = ifilepath;
+		FileInputStream iFilePath = new FileInputStream(iExcelPath);
+		@SuppressWarnings("resource")
+		XSSFWorkbook iWB = new XSSFWorkbook(iFilePath);
+		XSSFSheet iActualSheet = iWB.getSheet(iSheetname);
+		try {
+			iActualSheet.createFreezePane(0, 0);
+		} catch (IndexOutOfBoundsException e) {
+
+			System.out.println("The cells are not frozen");
+		}
+		int iTotalRowsCount = iActualSheet.getPhysicalNumberOfRows();
+		String totalrws = Integer.toString(iTotalRowsCount);
+		int iTotalColumnsCount = iActualSheet.getRow(iTotalRowsCount).getPhysicalNumberOfCells();
+		System.out.println("Total Rows:-->" + iTotalRowsCount);
+		System.out.println("Total Columns:-->" + iTotalColumnsCount);
+		return totalrws;
+
+	}
+
+	/**
+	 * 
+	 * @param rowcount
+	 *            int
+	 * @param columncount
+	 *            int
+	 * @param filepath
+	 *            String
+	 * @param Sheetname
+	 *            String
+	 */
+	public static void readExcelData(int rowcount, int columncount, String filepath, String Sheetname) {
+
+		try {
+			FileInputStream input = new FileInputStream(filepath);
+			XSSFWorkbook wb = new XSSFWorkbook(input);
+			XSSFSheet sh = wb.getSheet(Sheetname);
+			try {
+				sh.createFreezePane(0, 0);
+			} catch (IndexOutOfBoundsException e) {
+
+				System.out.println("The cells are not frozen");
+			}
+			XSSFRow row = sh.getRow(rowcount);
+			String iCellVal = row.getCell(columncount).toString();
+			CommonVariables.ACTUAL_COLVALUE = iCellVal;
+			wb.close();
+			// return iCellVal;
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		// JOptionPane.showMessageDialog(null, "The Parameter is Selected:-> " + data);
+
+	}
+
+	/**
+	 * 
+	 * @param filepath
+	 *            String
+	 * @param Sheetname
+	 *            String
+	 */
+	public static void unFreezePanes(String filepath, String Sheetname) {
+
+		try {
+			FileInputStream input = new FileInputStream(filepath);
+			XSSFWorkbook wb = new XSSFWorkbook(input);
+			XSSFSheet sh = wb.getSheet(Sheetname);
+			try {
+				sh.createFreezePane(0, 0);
+			} catch (IndexOutOfBoundsException e) {
+
+				System.out.println("The cells are not frozen");
+			}
+
+			wb.close();
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		// JOptionPane.showMessageDialog(null, "The Parameter is Selected:-> " + data);
+
+	}
+
+	/**
+	 * this will create current date string
+	 * 
+	 * @return String
+	 * @throws Exception
+	 */
+	public static String createExecutionFolder() throws Exception {
+		Calendar imycalendar = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat("MMdd_hhmm_ss");
+		String iDatetimeStamp = formatter.format(imycalendar.getTime());
+		// JOptionPane.showMessageDialog(null,iDatetimeStamp);
+		return iDatetimeStamp;
+	}
+
+	/**
+	 * this will check for element attribute
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @param attribute
+	 *            String
+	 * @return boolean
+	 */
+	public static boolean isAttribtuePresent(WebDriver driver, WebElement element, String attribute) {
+		Boolean result = false;
+		try {
+			String value = element.getAttribute(attribute);
+			if (value != null) {
+				result = true;
+			}
+		} catch (Exception e) {
+		}
+
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param ifilepath
+	 *            String
+	 * @param iSheetname
+	 *            String
+	 * @param iTSid
+	 *            String
+	 * @param iTSidColumnNumber
+	 *            int
+	 * @param iTS_UniqueID
+	 *            String
+	 * @param iiTS_UniqueIDColumnNumber
+	 *            int
+	 * @return String
+	 */
+	public static String iGetExcelTxtValueComparision(String ifilepath, String iSheetname, String iTSid,
+			int iTSidColumnNumber, String iTS_UniqueID, int iiTS_UniqueIDColumnNumber) {
+		try {
+
+			// String
+			// BPCIexcelPath=System.getProperty("user.dir")+"\\Source_Files\\BPCIClassic.xlsx";
+			FileInputStream fileInputStream = new FileInputStream(new File(ifilepath));
+			XSSFWorkbook iWB = new XSSFWorkbook(fileInputStream);
+			XSSFSheet iActualSheet = iWB.getSheet(iSheetname);
+
+			int iTotalRowsCount = iActualSheet.getLastRowNum();
+			int iTotalColumnsCount = iActualSheet.getRow(iTotalRowsCount).getPhysicalNumberOfCells();
+			int iNewRow = iTotalRowsCount + 1;
+			int iNewColumn = iTotalColumnsCount + 1;
+
+			for (int iActualRow = 1; iActualRow <= iTotalRowsCount; iActualRow++) {
+				String iGetTSidCellValue = iActualSheet.getRow(iActualRow).getCell(iTSidColumnNumber)
+						.getStringCellValue();
+				String iGetTSuniqueIDCellValue = iActualSheet.getRow(iActualRow).getCell(iiTS_UniqueIDColumnNumber)
+						.getStringCellValue();
+				if (iGetTSidCellValue.equalsIgnoreCase(iTSid)
+						&& iGetTSuniqueIDCellValue.equalsIgnoreCase(iTS_UniqueID)) {
+					CommonVariables.iAAExlTxtValiROWnum = iActualRow;
+					System.out.println("Row Number For Test Script ID and Unique IDentifier:--> " + iTSid + ":-->"
+							+ iTS_UniqueID + ":-->" + CommonVariables.iAAExlTxtValiROWnum);
+					// JOptionPane.showMessageDialog(null,"iCommonVariables.iAAExlTxtValiROWnum
+					// :-->"+iCommonVariables.iAAExlTxtValiROWnum);
+
+					for (int iActualColumn = 0; iActualColumn <= iTotalColumnsCount; iActualColumn++) {
+						// ************** Read Excel Input Below
+						if (iActualSheet.getRow(iActualRow).getCell(iActualColumn) != null) {
+							String iExcelHeaderValue = iActualSheet.getRow(0).getCell(iActualColumn)
+									.getStringCellValue();
+							String iExcelCellValue = iActualSheet.getRow(iActualRow).getCell(iActualColumn)
+									.getStringCellValue();
+							System.out.println("Excel Value:--> " + iExcelHeaderValue + ":--> "
+									+ iActualSheet.getRow(iActualRow).getCell(iActualColumn).getStringCellValue());
+							CommonVariables.iAAExlTxtValiTestScriptID = iActualSheet.getRow(iActualRow).getCell(0)
+									.getStringCellValue();
+							CommonVariables.iAAExlTxtValiUniqueIdentifier = iActualSheet.getRow(iActualRow).getCell(1)
+									.getStringCellValue();
+							CommonVariables.iAAExlTxtValiExpectedValue = iActualSheet.getRow(iActualRow).getCell(2)
+									.getStringCellValue();
+
+							break;
+						}
+					}
+					// To Pull All rows Remove below Break....
+					break;
+				}
+			}
+			iWB.close();
+		} catch (Exception e) {
+			System.out.println(e);
+			// System.out.println("Row Number For Test Script ID and Unique IDentifier:-->
+			// "+iTSid + ":-->"+ iTS_UniqueID + ":--> NOT FOUND.... Please Check");
+		}
+		return CommonVariables.iAAExlTxtValiExpectedValue;
+	}
+
+	/**
+	 * 
+	 * @param bwr
+	 *            BufferedWriter
+	 * @param ar
+	 *            ArrayList<String>
+	 * @param delimiter
+	 *            String
+	 * @throws IOException
+	 */
+	public static void CleanArrayList(BufferedWriter bwr, ArrayList<String> ar, String delimiter) throws IOException {
+		bwr.write(ar.toString().replace("[", "").replace("]", "").replace(", ", delimiter));
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @return String
+	 */
+	public static String getFirstSelectedOption(WebDriver driver, WebElement iObjectElement) {
+		String iActualText = null;
+		try {
+			if (findByElement(driver, iObjectElement)) {
+				Select drp = new Select(iObjectElement);
+				iActualText = drp.getFirstSelectedOption().getText().trim();
+
+			}
+
+		}
+
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return iActualText;
+	}
+
+	/**
+	 * this will generate random email:
+	 * random_string@message-checker.appspotmail.com
+	 * 
+	 * @param length
+	 *            int for how long random string have to be
+	 * @return String(email)
+	 */
+	public static String generateEmail(int length) {
+		String allowedChars = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "1234567890"; // alphabets
+																											// and
+																											// numbers
+
+		String email = "";
+		String temp = "IVVTest_" + RandomStringUtils.random(length, allowedChars);
+		email = temp.substring(0, temp.length() - 13) + "@message-checker.appspotmail.com";
+		return email;
+
+	}
+
+	/**
+	 * 
+	 * @param date_string
+	 *            String
+	 * @param daysToAdd
+	 *            int
+	 * @param dtformat
+	 *            String
+	 * @return String
+	 * @throws ParseException
+	 */
+	public static String addDays(String date_string, int daysToAdd, String dtformat) throws ParseException {
+		String DATE_FORMAT = dtformat;
+		// String date_string = "20-12-2001";
+		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(DATE_FORMAT);
+		Date date = (Date) sdf.parse(date_string);
+		Calendar c1 = Calendar.getInstance();
+		c1.setTime(date);
+		// System.out.println("Date is : " + sdf.format(c1.getTime()));
+		c1.add(Calendar.DAY_OF_WEEK, daysToAdd);
+		// System.out.println("Date + 1 month is : " + sdf.format(c1.getTime()));
+		String getDate = sdf.format(c1.getTime());
+		return getDate;
+	}
+
+	/**
+	 * 
+	 * @param driver
+	 * @param drpDwnOptionsObject
+	 *            List<WebElement>
+	 * @param partialText
+	 *            String
+	 */
+	public static void dropdownByPartialText(WebDriver driver, List<WebElement> drpDwnOptionsObject,
+			String partialText) {
+
+		List<WebElement> options = drpDwnOptionsObject;
+
+		for (WebElement option : options) {
+			if (option.getText().contains(partialText.trim())) {
+				option.click();
+				break;
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param length
+	 * @return String
+	 */
+	public static String generatestringNoprefix(int length) {
+		String allowedChars = "abcdefghijklmnopqrstuvwxyz" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "1234567890"; // alphabets
+																											// and
+																											// numbers
+
+		String email = "";
+		String temp = RandomStringUtils.random(length, allowedChars);
+		email = temp.substring(0, temp.length());
+		return email;
+
+	}
+
+	/**
+	 * 
+	 * @return int
+	 */
+	public static int currentLineNum() {
+		int lineNum = new Exception().getStackTrace()[1].getLineNumber();
+		return lineNum;
+	}
+
+	/**
+	 * this will wait for element to be present and clickable
+	 * 
+	 * @param driver
+	 * @param iObjectElement
+	 *            WebElement
+	 * @return WebElement
+	 */
+	public WebElement waitForElementPresence(WebDriver driver, WebElement iObjectElement) {
+
+		WebElement element = (new WebDriverWait(driver, CommonVariables.REPORT_GLOBALWAIT))
+				.until(ExpectedConditions.elementToBeClickable(iObjectElement));
+		highlight(driver, element);
+		return element;
+
+	}
+
+	/**
+	 * this will wait for element to be present and clickable
+	 * 
+	 * @param driver
+	 * @param byLocator
+	 *            By locator
+	 * @return WebElement
+	 */
+	public WebElement waitForElementPresenceByLocator(WebDriver driver, By byLocator) {
+
+		WebElement element = (new WebDriverWait(driver, CommonVariables.REPORT_GLOBALWAIT))
+				.until(ExpectedConditions.elementToBeClickable(byLocator));
+		highlight(driver, element);
+		return element;
+
+	}
+
+	/**
+	 * 
+	 * @param howManyDigit
+	 * @return int
+	 */
+	public static int randNumByDigit(int howManyDigit) {
+		SecureRandom random = new SecureRandom();
+		String min = "1";
+		String max = "9";
+		for (int i = 0; i < howManyDigit - 1; i++) {
+			min = min + "0";
+			max = max + "9";
+		}
+		int randomNumber = random.nextInt(Integer.valueOf(max) + 1 - Integer.valueOf(min)) + Integer.valueOf(min);
+		return randomNumber;
+	}
+
+	// ---------------------- NEW ---------------------------------------//
+
+	/**
+	 * This will wait for page to load for up to 120 seconds
+	 * 
+	 * @param driver
+	 */
+	public static void waitForPageToLoad(WebDriver driver) {
+		new WebDriverWait(driver, 12000).until(webDriver -> ((JavascriptExecutor) webDriver)
+				.executeScript("return document.readyState").equals("complete"));
+		return;
+	}
+
+	/**
+	 * Will check if element is present in DOM or will wait up to as many
+	 * seconds(passed in parameters) as needed for element to appear
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @param seconds
+	 *            int
+	 * @return WebElement
+	 */
+	public static void waitForElement(WebDriver driver, WebElement element, int seconds) {
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+		WebElement elm = (new WebDriverWait(driver, seconds)).until(ExpectedConditions.visibilityOf(element));
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		Assert.assertTrue(elm.isDisplayed(), "ELEMENT: " + element + " IS NOT PRESENT!!!");
+		return;
+	}
+
+	/**
+	 * Will move to element and align center screen
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @return element WebElement
+	 */
+	public static WebElement moveToElement(WebDriver driver, WebElement element) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});",
+				element);
+		return element;
+	}
+
+	/**
+	 * Will check if element is not present in DOM or will wait up to as many
+	 * seconds(passed in parameters) as needed for element to disappear
+	 * 
+	 * @param driver
+	 * @param elementXpath
+	 *            String
+	 * @param seconds
+	 *            int
+	 * @return boolean
+	 */
+	public static boolean verifyElementIsNotPresent(WebDriver driver, String xpathString, int seconds) {
+		// driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+		// boolean elementnotPresent = false;
+		// WebDriverWait wait = new WebDriverWait(driver, seconds);
+		// if
+		// (wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpathString)))
+		// == true) {
+		// elementnotPresent = true;
+		// driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		// }
+		// driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		// return elementnotPresent;
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+		WebDriverWait wait = new WebDriverWait(driver, seconds);
+		boolean elementnotPresent = wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpathString)));
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		return (elementnotPresent == true) ? true : false;
+	}
+
+	/**
+	 * This function is developed specifically for SF-lightning search function due
+	 * to the existing bug
+	 * 
+	 * @param driver
+	 * @param iterations
+	 *            int - up to how many time to refresh
+	 * @param xpathString
+	 *            element to look for
+	 * @param element
+	 *            element to click for refresh
+	 * @return boolean
+	 * @throws InterruptedException
+	 * @author Andrey Andreev
+	 */
+	public boolean refrshPageUntilElementPresent(WebDriver driver, int iterations, String xpathString,
+			WebElement element) throws InterruptedException {
+		if (isElementPresent(driver, xpathString) == false) {
+			int x = iterations;
+			for (int i = 0; i < x; i++) {
+				if (isElementPresent(driver, xpathString) == false) {
+					clickOnElement(driver, element);
+					waitForPageToLoad(driver);
+				} else if (i == x) {
+					return false;
+				} else {
+					x = 0;
+					return true;
+				}
+			}
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * This will scroll to and position element on the screen by passing location
+	 * </br>
+	 * If wrong position passed, default behavior will position element on top of
+	 * the page
+	 * <ul>
+	 * <li>Pass "top" to position element on top of the screen
+	 * <li>Pass "bottom" to position element on the bottom of the screen
+	 * <li>Pass "center" to position element in the middle of the screen
+	 * </ul>
+	 * 
+	 * @param driver
+	 *            WebDriver
+	 * @param element
+	 *            WebElement
+	 * @param position
+	 *            String
+	 * @return same WebElement as inputed
+	 */
+	public static WebElement moveToElement(WebDriver driver, WebElement element, String position) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		Assert.assertTrue(element.isDisplayed(), "ELEMENT: " + element + " IS NOT PRESENT!!!");
+		switch (position) {
+		case "top":
+			js.executeScript("arguments[0].scrollIntoView(true);", element);
+			break;
+		case "bottom":
+			js.executeScript("arguments[0].scrollIntoView(false);", element);
+			break;
+		case "center":
+			js.executeScript("arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});",
+					element);
+			break;
+		default:
+			js.executeScript("arguments[0].scrollIntoView(true);", element);
+		}
+		return element;
+	}
+
+	/**
+	 * This will scroll to the top of the page
+	 * 
+	 * @param driver
+	 */
+	public static void scrollToTheTop(WebDriver driver) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("window.scrollTo(0,0)");
+		return;
+	}
+
+	/**
+	 * This is optional function to refresh page that can be used inside
+	 * StaleElementReferenceException try catch block
+	 * 
+	 * 
+	 * @param driver
+	 *            WebDriver
+	 * @param element
+	 *            WebElement
+	 */
+	public static void staleElementAction(WebDriver driver, WebElement element) {
+		driver.navigate().refresh();
+		waitForPageToLoad(driver);
+		waitForElement(driver, element, 10);
+		moveToElement(driver, element);
+		return;
+	}
+
+	/**
+	 * This is optional function to execute JavaScript click and can be used inside
+	 * JavascriptException try catch block
+	 * 
+	 * @param driver
+	 *            WebDriver
+	 * @param element
+	 *            WebElement
+	 */
+	public static void JsClick(WebDriver driver, WebElement element) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		Assert.assertTrue(element.isDisplayed(), "ELEMENT: " + element + " IS NOT PRESENT!!!");
+		js.executeScript("arguments[0].click()", element);
+		return;
+	}
+
+	/**
+	 * This function will click on element while using try catch block to catch
+	 * StaleElementReferenceException or JavascriptException errors.
+	 * </p>
+	 * If JavascriptException caught, catch block will execute {@link #JsClick}
+	 * </br>
+	 * If StaleElementReferenceException caught, catch block will execute
+	 * {@link #staleElementAction}
+	 * 
+	 * @param driver
+	 *            WebDriver
+	 * @param element
+	 *            WebElement
+	 */
+	public static void clickOnElement(WebDriver driver, WebElement element) {
+		Assert.assertTrue(element.isDisplayed(), "ELEMENT: " + element + " IS NOT PRESENT!!!");
+		try {
+			element.click();
+		} catch (StaleElementReferenceException err) {
+			try {
+				staleElementAction(driver, element);
+				element.click();
+			} catch (JavascriptException err1) {
+				JsClick(driver, element);
+			}
+		} catch (JavascriptException err2) {
+			JsClick(driver, element);
+		}
+		return;
+	}
+
+	/**
+	 * This will highlight element orange with red border
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 */
+	public static void highlightElement(WebDriver driver, WebElement element) {
+		Assert.assertTrue(element.isDisplayed(), "ELEMENT: " + element + " IS NOT PRESENT!!!");
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("arguments[0].setAttribute('style', 'background: orange; border: 2px solid red;');", element);
+		return;
+	}
+
+	/**
+	 * This will unhighlight highlighted element
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 */
+	public static void unhighlightElement(WebDriver driver, WebElement element) {
+		Assert.assertTrue(element.isDisplayed(), "ELEMENT: " + element + " IS NOT PRESENT!!!");
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("arguments[0].setAttribute('style', '');", element);
+		return;
+	}
+
+	/**
+	 * This will get text from element
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @return String text from element
+	 */
+	public static String getTextFromElement(WebDriver driver, WebElement element) {
+		String actualText = element.getText();
+		return actualText;
+	}
+
+	/**
+	 * This will verify if text from element matches to test text
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @param text
+	 *            String to verify
+	 */
+	public static void verifyText(WebDriver driver, WebElement element, String text) {
+		String elmText = getTextFromElement(driver, element).trim();
+		Assert.assertEquals(elmText, text, "TEXT FROM ELEMENT: " + elmText + " DOES NOT MATCH TEST TEXT: " + text);
+		return;
+	}
+
+	/**
+	 * This will verify if text from element contains test text
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @param text
+	 *            String to verify
+	 */
+	public static void verifyTextContains(WebDriver driver, WebElement element, String text) {
+		String elmText = getTextFromElement(driver, element).trim();
+		Assert.assertTrue(elmText.contains(text),
+				"TEXT FROM ELEMENT: " + elmText + " DOES NOT CONTAIN TEST TEXT: " + text);
+		return;
+	}
+
+	/**
+	 * This will get current page URL
+	 * 
+	 * @param driver
+	 * @return String current page URL
+	 */
+	public static String getCurrentUrl(WebDriver driver) {
+		String currentUrl = driver.getCurrentUrl();
+		return currentUrl;
+	}
+
+	/**
+	 * This will verify if current page URL matches to test URL
+	 * 
+	 * @param driver
+	 * @param url
+	 *            String to verify against current URL
+	 */
+	public static void verifyUrl(WebDriver driver, String url) {
+		String currentUrl = getCurrentUrl(driver);
+		Assert.assertEquals(currentUrl, url, "CURRENT URLS: " + currentUrl + " DON'T MATCH TO TEST URL: " + url);
+		return;
+	}
+
+	/**
+	 * This will verify if current URL contains test path
+	 * 
+	 * @param driver
+	 * @param url
+	 *            String urlPath to verify against current URL
+	 */
+	public static void verifyUrlContains(WebDriver driver, String urlPath) {
+		String currentUrl = getCurrentUrl(driver);
+		Assert.assertTrue(currentUrl.contains(urlPath),
+				"CURRENT PAGE URL: " + currentUrl + " DOES NOT CONTAIN: " + urlPath + " PATH!!!");
+		return;
+	}
+
+	/**
+	 * This will refresh page
+	 * 
+	 * @param driver
+	 */
+	public static void refreshPage(WebDriver driver) {
+		driver.navigate().refresh();
+		waitForPageToLoad(driver);
+		return;
+	}
+
+	/**
+	 * This will navigate to the page with given URL
+	 * 
+	 * @param driver
+	 * @param url
+	 *            String of the page you want to go to
+	 */
+	public static void goToThePage(WebDriver driver, String url) {
+		driver.get(url);
+		waitForPageToLoad(driver);
+		return;
+	}
+
+	/**
+	 * This will get current page title
+	 * 
+	 * @param driver
+	 * @return String page title
+	 */
+	public static String getPageTitle(WebDriver driver) {
+		String pageTitle = driver.getTitle();
+		return pageTitle;
+	}
+
+	/**
+	 * This will verify current page title
+	 * 
+	 * @param driver
+	 * @param title
+	 *            String to verify against current page title
+	 */
+	public static void verifyPageTitle(WebDriver driver, String tpageTitle) {
+		String currentTitle = getPageTitle(driver);
+		Assert.assertEquals(currentTitle, tpageTitle,
+				"CURRENT PAGE TITLE: " + currentTitle + " DOES NOT MATCH TEST TITLE: " + tpageTitle);
+		return;
+	}
+
+	/**
+	 * This will hover over element
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 */
+	public static void hoverOver(WebDriver driver, WebElement element) {
+		Actions action = new Actions(driver);
+		action.moveToElement(element).build().perform();
+		return;
+	}
+
+	/**
+	 * This will navigate to previous page / equivalent of clicking browser back
+	 * button
+	 * 
+	 * @param driver
+	 */
+	public static void goToPreviousPage(WebDriver driver) {
+		driver.navigate().back();
+		waitForPageToLoad(driver);
+		return;
+	}
+
+	/**
+	 * This is equivalent of clicking "Enter" key on keyboard
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 */
+	public static void pressEnterKey(WebDriver driver, WebElement element) {
+		element.sendKeys(Keys.ENTER);
+		return;
+	}
+
+	/**
+	 * This will highlight element, then take screenshot, then unhighlight element
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @param iScreenShotpath
+	 *            String
+	 * @param iScreenshotName
+	 *            String
+	 * @param assertCount
+	 *            int
+	 * @return int assertCount
+	 */
+	public static int highlightElmThenScreenshot(WebDriver driver, WebElement element, String iScreenShotpath,
+			String iScreenshotName, int assertCount) {
+		highlightElement(driver, element);
+		int count = captureScreenshot(driver, iScreenShotpath, iScreenshotName, assertCount);
+		unhighlightElement(driver, element);
+		return count;
+	}
+
+	/**
+	 * This will highlight element then take screenshot then click on that element
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @param iScreenShotpath
+	 *            String
+	 * @param iScreenshotName
+	 *            String
+	 * @param assertCount
+	 *            int
+	 * @return int assertCount
+	 */
+	public static int highlightElmScreenshotClick(WebDriver driver, WebElement element, String iScreenShotpath,
+			String iScreenshotName, int assertCount) {
+		highlightElmThenScreenshot(driver, element, iScreenshotName, iScreenshotName, assertCount);
+		clickOnElement(driver, element);
+		return assertCount;
+	}
+
+	/**
+	 * This will click on the element, then highlight this element, then take
+	 * screenshot, then unhighlight this element. </br>
+	 * This function is primarily used to verify check boxes and radio buttons
+	 * functionality
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 * @param iScreenShotpath
+	 *            String
+	 * @param iScreenshotName
+	 *            String
+	 * @param assertCount
+	 *            int
+	 * @return int AssertCount
+	 */
+	public static int clickElmHighlightScreenshot(WebDriver driver, WebElement element, String iScreenShotpath,
+			String iScreenshotName, int assertCount) {
+		clickOnElement(driver, element);
+		highlightElmThenScreenshot(driver, element, iScreenshotName, iScreenshotName, assertCount);
+		return assertCount;
+	}
+
+	/**
+	 * This will input text
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement - input or textArea
+	 * @param text
+	 *            String - input text
+	 * @throws InterruptedException
+	 */
+	public static void inputText(WebDriver driver, WebElement element, String text) throws InterruptedException {
+		clickOnElement(driver, element);
+		element.clear();
+		element.sendKeys(text);
+		Thread.sleep(1000);
+		return;
+	}
+
+	/**
+	 * This will find "input" or "textArea" element, then highlight this element,
+	 * then input text, then take screenshot, then unhighlight element
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement - have to be input or textArea element
+	 * @param iScreenShotpath
+	 *            String
+	 * @param iScreenshotName
+	 *            String
+	 * @param text
+	 *            String of input text
+	 * @param assertCount
+	 *            int
+	 * @return assertCount int
+	 * @throws InterruptedException
+	 */
+	public static int inputTextThenScreenshot(WebDriver driver, WebElement element, String iScreenShotpath,
+			String iScreenshotName, String text, int assertCount) throws InterruptedException {
+		highlightElement(driver, element);
+		inputText(driver, element, text);
+		assertCount = captureScreenshot(driver, iScreenShotpath, iScreenshotName, assertCount);
+		unhighlightElement(driver, element);
+		return assertCount;
+	}
+
+	/**
+	 * This will switch focus to the child tab after clicking on external link, so
+	 * actions can be performed within child tab
+	 * 
+	 * @param driver
+	 * @throws InterruptedException
+	 */
+	public static void switchToChildTAb(WebDriver driver) throws InterruptedException {
+		ArrayList<String> tab2 = new ArrayList<String>(driver.getWindowHandles());
+		driver.switchTo().window(tab2.get(1));
+		Thread.sleep(1000);
+		return;
+	}
+
+	/**
+	 * This will close child tab and will switch focus to the main tab
+	 * </p>
+	 * this needs to be used after {@link #switchToChildTAb} in case if any further
+	 * actions need to be performed on the main tab after all interactions completed
+	 * on child tab
+	 * 
+	 * @param driver
+	 * @throws InterruptedException
+	 */
+	public static void switchToMainTab(WebDriver driver) throws InterruptedException {
+		ArrayList<String> tab = new ArrayList<String>(driver.getWindowHandles());
+		driver.close();
+		driver.switchTo().window(tab.get(0));
+		Thread.sleep(1000);
+		return;
+	}
+
+	/**
+	 * This will verify if checkbox, select option or radio button is selected
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 */
+	public static void verifyElmSelected(WebDriver driver, WebElement element) {
+		Assert.assertTrue(element.isSelected(), "ELEMENT: " + element + " IS NOT SELECTED");
+		return;
+	}
+
+	/**
+	 * This will verify if checkbox, select option or radio button is not selected
+	 * 
+	 * @param driver
+	 * @param element
+	 *            WebElement
+	 */
+	public static void verifyElmNotSelected(WebDriver driver, WebElement element) {
+		Assert.assertFalse(element.isSelected(), "ELEMENT: " + element + " IS SELECTED");
+		return;
+	}
+
+	/**
+	 * This will get current calendar day and can be used for selecting day inside
+	 * calendar
+	 * 
+	 * @return int current day
+	 */
+	public static int currentDay() {
+		Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+		int day = calendar.get(Calendar.DATE);
+		return day;
+	}
+
+	/**
+	 * This will accept native JS alert and then switch focus back to main
+	 * window/page
+	 * 
+	 * @param driver
+	 */
+	public static void nativeAlertAccept(WebDriver driver) {
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+		new WebDriverWait(driver, 5).until(ExpectedConditions.alertIsPresent());
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		driver.switchTo().alert();
+		driver.switchTo().alert().accept();
+		driver.switchTo().defaultContent();
+		return;
+	}
+
+	/**
+	 * This will dismiss native JS alert and then switch focus to the main
+	 * window/page
+	 * 
+	 * @param driver
+	 */
+	public static void nativeAlertDismiss(WebDriver driver) {
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+		new WebDriverWait(driver, 5).until(ExpectedConditions.alertIsPresent());
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		driver.switchTo().alert();
+		driver.switchTo().alert().dismiss();
+		driver.switchTo().defaultContent();
+		return;
+	}
+
+	/**
+	 * This will wait for page to load then search for the element
+	 * 
+	 * @param driver
+	 * @param elementXpath
+	 * @throws InterruptedException
+	 */
+	public void waitForInvisibilityOfElement(WebDriver driver, By elementXpath) throws InterruptedException {
+
+		long currentTimestamp = (new Date()).getTime();
+		int waitingSeconds = 120 * 1000;
+		long endTimestamp = currentTimestamp + waitingSeconds;
+
+		boolean isElementPresent = true;
+
+		LogAccess.getLogger().info("End timestamp for Invisibility of an Element is " + endTimestamp);
+
+		while ((new Date()).getTime() < endTimestamp && isElementPresent) {
+
+			Thread.sleep(5000);
+
+			isElementPresent = isElementPresentBy(driver, elementXpath);
+
+		}
+	}
